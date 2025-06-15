@@ -1,0 +1,62 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Set input values
+v_b = float(input("Boat speed magnitude (m/s): "))
+theta_b_deg = float(input("Boat direction (degrees): "))
+v_c = float(input("River current speed magnitude (m/s): "))
+theta_c_deg = float(input("River current direction (degrees): "))
+d = float(input("River width (m): "))
+
+# Convert angles to radians
+theta_b = np.radians(theta_b_deg)
+theta_c = np.radians(theta_c_deg)
+
+# Vector calculations (decomposition)
+v_b_x = v_b * np.cos(theta_b)
+v_b_y = v_b * np.sin(theta_b)
+v_c_x = v_c * np.cos(theta_c)
+v_c_y = v_c * np.sin(theta_c)
+v_r_x = v_b_x + v_c_x
+v_r_y = v_b_y + v_c_y
+
+# Time to cross the river
+if v_r_y == 0:
+    print("The boat cannot cross the river.")
+else:
+    t = d / v_r_y
+    # Boat's path
+    t_values = np.linspace(0, t, 100)
+    x = v_r_x * t_values
+    y = v_r_y * t_values
+
+    # Visualization
+    plt.figure(figsize=(10, 6))
+    plt.plot(x, y, 'b-', label='Resultant Path (Parallelogram Method)')
+    plt.scatter([0], [0], color='red', label='Start Point')
+    plt.scatter([x[-1]], [y[-1]], color='green', label='End Point')
+
+    # Triangle method visualization
+    v_b_end_x = v_b_x
+    v_b_end_y = v_b_y
+    v_c_start_x = v_b_end_x
+    v_c_start_y = v_b_end_y
+    plt.quiver(0, 0, v_b_x, v_b_y, color='r', scale=10, label='Boat Velocity')
+    plt.quiver(v_c_start_x, v_c_start_y, v_c_x, v_c_y, color='m', scale=10, label='Current Velocity')
+    plt.quiver(0, 0, v_r_x, v_r_y, color='g', scale=10, label='Resultant (Triangle Method)')
+
+    plt.xlabel('X (m)')
+    plt.ylabel('Y (m)')
+    plt.title('Boat Crossing River Simulation')
+    plt.legend()
+    plt.grid()
+    plt.axis('equal')
+    plt.show()
+
+    # Output results
+    mag_v_r = np.sqrt(v_r_x**2 + v_r_y**2)
+    dir_v_r = np.degrees(np.arctan2(v_r_y, v_r_x))
+    print(f"Boat's resultant velocity vector: ({v_r_x:.2f}, {v_r_y:.2f}) m/s")
+    print(f"Resultant speed magnitude: {mag_v_r:.2f} m/s, direction: {dir_v_r:.2f}°")
+    print(f"Time to cross the river: {t:.2f} seconds")
+    print(f"Arrival point: ({x[-1]:.2f}, {y[-1]:.2f}) m")
