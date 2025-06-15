@@ -1,0 +1,45 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define vectors
+A = np.array([3, 0])  # vec_A = (3, 0)
+B = np.array([4, 0])  # vec_B = (4, 0)
+
+# Set angles (in degrees)
+angles_deg = [0, 30, 60, 90, 120, 150, 180]
+angles_rad = np.deg2rad(angles_deg)
+
+# Simulation for each angle
+for theta in angles_rad:
+    # Rotate vec_B by theta angle
+    B_rot = np.array([4 * np.cos(theta), 4 * np.sin(theta)])
+
+    # Calculate resultant vector (parallelogram method)
+    R = A + B_rot
+    mag_R = np.linalg.norm(R)  # Magnitude of resultant vector
+    dir_R = np.degrees(np.arctan2(R[1], R[0]))  # Direction of resultant vector (in degrees)
+
+    # Calculate theoretical magnitude
+    theoretical_mag = np.sqrt(3**2 + 4**2 + 2 * 3 * 4 * np.cos(theta))
+    theoretical_dir = np.degrees(np.arctan2(4 * np.sin(theta), 3 + 4 * np.cos(theta)))
+
+    # Visualization
+    plt.figure(figsize=(8, 6))
+    plt.quiver(0, 0, A[0], A[1], color='r', scale=20, label='A')
+    plt.quiver(0, 0, B_rot[0], B_rot[1], color='b', scale=20, label=f'B (theta={np.rad2deg(theta):.0f}°)')
+    plt.quiver(0, 0, R[0], R[1], color='g', scale=20, label=f'A+B (mag={mag_R:.2f}, dir={dir_R:.2f}°)')
+    # Triangle method: Draw B from the endpoint of A to connect to the resultant
+    plt.quiver(A[0], A[1], B_rot[0], B_rot[1], color='m', scale=20, label=f'Triangle Method')
+
+    plt.legend()
+    plt.title(f'Vector Addition at theta = {np.rad2deg(theta):.0f}°')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.grid()
+    plt.axis('equal')
+    plt.show()
+
+    # Output results
+    print(f"Theta = {np.rad2deg(theta):.0f}°:")
+    print(f"  Theoretical |R| = {theoretical_mag:.2f}, Simulated |R| = {mag_R:.2f}")
+    print(f"  Theoretical Direction = {theoretical_dir:.2f}°, Simulated Direction = {dir_R:.2f}°")
